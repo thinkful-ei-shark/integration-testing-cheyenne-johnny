@@ -7,8 +7,14 @@ app.use(morgan('common'));
 const playStore = require('./playstore');
 
 app.get('/apps', (req, res) => {
-  const {sort} = req.query;
-  const returnData = [...playStore];
+  const {sort, genre} = req.query;
+  let returnData = [...playStore];
+
+  if(genre && genre !== 'action' && genre !== 'puzzle' && genre !== 'strategy' && genre !== 'casual' && genre !== 'arcade' && genre !== 'card') {
+    res
+      .status(400)
+      .send('Genre must be one of the following : action, puzzle, strategy, casual, arcade, card');
+  }
 
   // sort validation
   if(sort && sort !== 'rating' && sort !== 'app') {
@@ -16,6 +22,15 @@ app.get('/apps', (req, res) => {
       .status(400)
       .send('Sort must be one of rating or app');
   }
+
+  // genre filtering
+  if(genre) {
+    returnData = returnData.filter(a => {
+      return a.Genres.toLowerCase().includes(genre.toLowerCase());
+    });
+  }
+
+
   // sort by rating or app
   if(sort) {
     let newSort;
@@ -33,7 +48,6 @@ app.get('/apps', (req, res) => {
       return;
     });
   }
-  if(sort === 'app')
 
   res.json(returnData);
 });
