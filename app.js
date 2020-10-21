@@ -1,34 +1,34 @@
-const express = require("express");
-const morgan = require("morgan");
+const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
-app.use(morgan("common"));
+app.use(morgan('common'));
 
-const playStore = require("./playstore");
+const playStore = require('./playstore');
 
-app.get("/apps", (req, res) => {
+app.get('/apps', (req, res) => {
   const { sort, genre } = req.query;
   let returnData = [...playStore];
 
   if (
     genre &&
-    genre !== "action" &&
-    genre !== "puzzle" &&
-    genre !== "strategy" &&
-    genre !== "casual" &&
-    genre !== "arcade" &&
-    genre !== "card"
+    genre !== 'action' &&
+    genre !== 'puzzle' &&
+    genre !== 'strategy' &&
+    genre !== 'casual' &&
+    genre !== 'arcade' &&
+    genre !== 'card'
   ) {
     return res
       .status(400)
       .send(
-        "Genre must be one of the following : action, puzzle, strategy, casual, arcade, card"
+        'Genre must be one of the following : action, puzzle, strategy, casual, arcade, card'
       );
   }
 
   // sort validation
-  if (sort && sort !== "rating" && sort !== "app") {
-    return res.status(400).send("Sort must be one of rating or app");
+  if (sort && sort !== 'rating' && sort !== 'app') {
+    return res.status(400).send('Sort must be one of rating or app');
   }
 
   // genre filtering
@@ -42,14 +42,13 @@ app.get("/apps", (req, res) => {
   if (sort) {
     let newSort;
 
-    if (sort === "rating") {
-      newSort = "Rating";
+    if (sort === 'rating') {
+      newSort = 'Rating';
     } else {
-      newSort = "App";
+      newSort = 'App';
     }
 
     returnData.sort((currApp, nextApp) => {
-      console.log("currApp rating", currApp[newSort]);
       if (currApp[newSort] > nextApp[newSort]) return 1;
       if (currApp[newSort] < nextApp[newSort]) return -1;
       return;
